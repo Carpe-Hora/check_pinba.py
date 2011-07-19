@@ -184,15 +184,15 @@ def return_nagios_status(data, warning, critical, message):
 # Main
 #
 
-conn=mysql_connect(options.hostname, 
-                options.username, 
-                options.password, 
-                options.database, 
-                options.port)
+if __name__ == "__main__":
+  conn=mysql_connect(options.hostname, 
+                  options.username, 
+                  options.password, 
+                  options.database, 
+                  options.port)
 
-data = get_data(options.report, options.query, options.value, conn)
+  data = get_data(options.report, options.query, options.value, conn)
 
-mysql_disconnect(conn)
-
-message = options.report + ":" + options.value + " " + options.query + ":"  + str(data)
-return_nagios_status(float(data), float(options.warning), float(options.critical), message)
+  mysql_disconnect(conn)
+  message = "%s:%s %s:%s" %(options.report,  options.value, options.query, data)
+  return_nagios_status(float(data), float(options.warning), float(options.critical), message)
