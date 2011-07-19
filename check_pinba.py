@@ -194,5 +194,5 @@ data = get_data(options.report, options.query, options.value, conn)
 
 mysql_disconnect(conn)
 
-message = options.report + ":" + options.value + " " + str(data)
+message = options.report + ":" + options.value + " " + options.query + ":"  + str(data)
 return_nagios_status(float(data), float(options.warning), float(options.critical), message)
