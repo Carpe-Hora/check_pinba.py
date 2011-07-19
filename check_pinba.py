@@ -13,7 +13,43 @@
 from optparse import OptionParser
 import MySQLdb
 
-parser = OptionParser(usage="%prog \nDescription : \n\nRequirements : \n * mysqldb : to Debian aptitude install python-mysqldb", 
+parser = OptionParser(usage="""%prog 
+Description :
+
+Pinba is a realtime monitoring/statistics server for PHP using MySQL as a read-only interface. http://pinba.org
+Pinba stock data in Mysql database. They are few tables, mainly this : 
+
+* info
+* report_by_hostname
+* report_by_hostname_and_script
+* report_by_hostname_and_server
+* report_by_hostname_server_and_script
+* report_by_script_name
+* report_by_server_and_script
+* report_by_server_name
+* request
+
+Actually, juste the report_by_hostname, by script_name and by server_name are supported. But the support, will be enlarge according the needs.
+
+To use this plugin you must specify :
+
+* database host
+* pinba database name
+* login and password to connect to the pinba database
+* the table that you want check (report_by ...)
+* the column that you want get. For example, to report_by_hostname, req_count column (check your table content)
+* the value of the report type. For example, to report_by_hostname, you must specify the app server name
+* and in almost all plugin nagios, the warning and critical value
+
+An example of using : 
+
+./check_pinba.py -H localhost -u pinba -p password -D pinba -r report_by_hostname -q req_count -v apache00
+
+The plugin, will be connect to the database, and get the data with a SQL request.
+
+Requirements :
+
+* mysqldb : to Debian aptitude install python-mysqldb""", 
                     
                     version="%prog 1.0")
 
@@ -35,11 +71,11 @@ parser.add_option("-P", "--port", dest="port", default=3306,
 parser.add_option("-r", "--report", dest="report", 
                  help="report type, corresponding to the table name", metavar="report_by_hostname")
 
-parser.add_option("-q", "--query", dest="query",
-                 help="corresponding to the column name of the table", metavar="req_count")
+parser.add_option("-q", "--query", dest="query", default="req_count",
+                 help="corresponding to the column name of the table. Default: req_count", metavar="req_count")
 
-parser.add_option("-v", "--value", dest="value", default="req_count",
-                 help="value on the report type. For example, the app server \"app00\"\n:Default: req_count ", metavar="app00")
+parser.add_option("-v", "--value", dest="value", 
+                 help="value on the report type. For example, the app server \"app00\"", metavar="app00")
 
 parser.add_option("-w", "--warning", dest="warning", 
                   help="warning value, depending of -r, -q and -v options", metavar="5")
@@ -62,7 +98,6 @@ def mysql_connect(hostname, username, password, database, port):
 def mysql_disconnect(conn):
   """disconnect to mysql(cursor, conn)"""
   conn.close()
-  print "disconnect"
 
 def value_column(report):
   """return the value column name, to the where condition of the sql request"""
@@ -84,16 +119,7 @@ def get_data(report, query, value, conn):
   row = cursor.fetchone ()
   print "retour: %s " %row
 
-#def number_version(conn):
-#  """test"""
-#  cursor = conn.cursor()
-#  cursor.execute ("SELECT VERSION()")
-#  row = cursor.fetchone ()
-#  print "server version:", row[0]
-#  cursor.close()
-
-
-conn =mysql_connect(options.hostname, 
+conn=mysql_connect(options.hostname, 
                 options.username, 
                 options.password, 
                 options.database, 
