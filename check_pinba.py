@@ -171,13 +171,14 @@ def validate_thresholds(warning, critical):
 def return_nagios_status(data, warning, critical, message):
   """ find the nagios status before use the end methods """
   validate_thresholds(warning, critical)
+  perfdata = "time=%s" %data
 
   if data < warning:
-    end(OK, message, data)
+    end(OK, message, perfdata)
   if data >= warning and data < critical:
-    end(WARNING, message, data)
+    end(WARNING, message, perfdata)
   if data >= critical:
-    end(CRITICAL, message, data)
+    end(CRITICAL, message, perfdata)
 
 
 #
