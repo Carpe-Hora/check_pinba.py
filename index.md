@@ -11,7 +11,7 @@ check_pinba.py
 Licence
 -------
 
-This plugin has been writen by Carpe-Hora <www.carpe-hora.com> Camille Neron <camille_neron@gmail.com>.
+This plugin has been writen by Carpe-Hora Camille Neron.
 
 Of course, check_pinba is under GNU GPL v2 : http://www.gnu.org/licenses/gpl-2.0.html
 
